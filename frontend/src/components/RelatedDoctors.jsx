@@ -1,10 +1,20 @@
-import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
+import React, { useContext, useEffect, useState } from 'react'
+import { AppContext } from '../context/AppContext'
+import { useNavigate } from 'react-router-dom'
 
-const TopDoctors = () => {
-  const navigate = useNavigate();
-  const {doctors} =useContext(AppContext)
+const RelatedDoctors = ({speciality,docId}) => {
+
+    const {doctors} = useContext(AppContext)
+    const navigate=useNavigate()
+
+    const [relDoc,setRelDocs] = useState([])
+
+    useEffect(()=>{
+        if (doctors.length > 0 && speciality) {
+            const doctorsData = doctors.filter((doc)=> doc.speciality===speciality && doc._id!==docId)
+            setRelDocs(doctorsData)
+        }
+    },[doctors,speciality,docId])
 
   return (
     <section className="w-full px-4 sm:px-6 lg:px-8 py-12">
@@ -28,7 +38,7 @@ const TopDoctors = () => {
                       lg:grid-cols-4 
                       gap-6">
         
-        {doctors.slice(0, 10).map((item, index) => (
+        {relDoc.slice(0, 5).map((item, index) => (
           <div
             key={index}
             onClick={() => {navigate(`/appointment/${item._id}`);scrollTo(0,0)}}
@@ -70,7 +80,7 @@ const TopDoctors = () => {
       </div>
       <button onClick={()=>{navigate('/doctors');scrollTo(0,0)}} className="bg-blue-50 text-gray-600 px-12 py-3 rounded-full mt-10">more</button>
     </section>
-  );
-};
+  )
+}
 
-export default TopDoctors;
+export default RelatedDoctors
