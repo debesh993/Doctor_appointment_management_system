@@ -4,71 +4,90 @@ import { AppContext } from "../context/AppContext";
 
 const TopDoctors = () => {
   const navigate = useNavigate();
-  const {doctors} =useContext(AppContext)
+  const { doctors } = useContext(AppContext);
 
   return (
-    <section className="w-full px-4 sm:px-6 lg:px-8 py-12">
+    <section className="w-full px-4 sm:px-6 lg:px-8 py-16 bg-gray-50">
       
       {/* Heading Section */}
-      <div className="max-w-6xl mx-auto text-center mb-10">
+      <div className="max-w-7xl mx-auto text-center mb-12">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900">
           Top Doctors to Book
         </h1>
 
         <p className="mt-4 text-gray-600 text-sm sm:text-base max-w-2xl mx-auto">
-          Simply browse through our extensive list of trusted doctors and
-          schedule your appointment hassle-free.
+          Browse through our trusted doctors and schedule your appointment easily.
         </p>
       </div>
 
       {/* Doctors Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 
-                      sm:grid-cols-2 
-                      md:grid-cols-3 
-                      lg:grid-cols-4 
-                      gap-6">
-        
+      <div
+        className="max-w-7xl mx-auto grid 
+        grid-cols-2 
+        sm:grid-cols-2 
+        md:grid-cols-3 
+        lg:grid-cols-4 
+        xl:grid-cols-5 
+        gap-6"
+      >
         {doctors.slice(0, 10).map((item, index) => (
           <div
             key={index}
-            onClick={() => {navigate(`/appointment/${item._id}`);scrollTo(0,0)}}
-            className="bg-white rounded-2xl shadow-md 
-                       hover:shadow-xl hover:-translate-y-2 
+            onClick={() => {
+              navigate(`/appointment/${item._id}`);
+              scrollTo(0, 0);
+            }}
+            className="bg-white rounded-xl shadow-sm 
+                       hover:shadow-lg hover:-translate-y-1 
                        transition-all duration-300 cursor-pointer 
                        overflow-hidden"
           >
             {/* Image */}
-            <div className="bg-blue-50 flex items-center justify-center h-56">
+            <div className="bg-indigo-50 flex items-center justify-center h-40">
               <img
                 src={item.image}
                 alt={item.name}
-                className="h-full object-contain"
+                className="h-36 object-contain"
               />
             </div>
 
             {/* Content */}
-            <div className="p-5">
+            <div className="p-4">
               
               {/* Availability */}
-              <div className="flex items-center gap-2 text-sm text-green-600 mb-2">
+              <div className="flex items-center gap-2 text-xs text-green-600 mb-2">
                 <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                 Available
               </div>
 
               {/* Name */}
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-sm md:text-base font-semibold text-gray-900 truncate">
                 {item.name}
               </h3>
 
               {/* Speciality */}
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-gray-500 text-xs md:text-sm mt-1 truncate">
                 {item.speciality}
               </p>
             </div>
           </div>
         ))}
       </div>
-      <button onClick={()=>{navigate('/doctors');scrollTo(0,0)}} className="bg-blue-50 text-gray-600 px-12 py-3 rounded-full mt-10">more</button>
+
+      {/* More Button */}
+      <div className="flex justify-center mt-14">
+        <button
+          onClick={() => {
+            navigate("/doctors");
+            scrollTo(0, 0);
+          }}
+          className="px-10 py-3 bg-indigo-600 text-white rounded-full 
+                     font-medium shadow-md hover:shadow-lg 
+                     hover:bg-indigo-700 transition-all duration-300"
+        >
+          View All Doctors
+        </button>
+      </div>
     </section>
   );
 };

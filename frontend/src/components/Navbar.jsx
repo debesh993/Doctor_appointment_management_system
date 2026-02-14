@@ -1,11 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { assets } from "../assets/assets";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [token, setToken] = useState(true);
+
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const navLinkStyle = ({ isActive }) =>
     `relative px-2 py-1 transition ${
@@ -28,55 +45,69 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex items-center gap-8 text-sm">
-          <NavLink to="/" className={navLinkStyle}>
-            HOME
-          </NavLink>
-          <NavLink to="/doctors" className={navLinkStyle}>
-            ALL DOCTORS
-          </NavLink>
-          <NavLink to="/about" className={navLinkStyle}>
-            ABOUT
-          </NavLink>
-          <NavLink to="/contact" className={navLinkStyle}>
-            CONTACT
-          </NavLink>
+          <NavLink to="/" className={navLinkStyle}>HOME</NavLink>
+          <NavLink to="/doctors" className={navLinkStyle}>ALL DOCTORS</NavLink>
+          <NavLink to="/about" className={navLinkStyle}>ABOUT</NavLink>
+          <NavLink to="/contact" className={navLinkStyle}>CONTACT</NavLink>
         </ul>
 
         {/* Right Section */}
         <div className="flex items-center gap-4">
 
           {token ? (
-            <div className="relative group">
-              <div className="flex items-center gap-2 cursor-pointer">
+            <div className="relative" ref={dropdownRef}>
+              <div
+                onClick={() => setShowDropdown((prev) => !prev)}
+                className="flex items-center gap-2 cursor-pointer"
+              >
                 <img
                   className="w-9 h-9 rounded-full object-cover border"
                   src={assets.profile_pic}
                   alt=""
                 />
                 <img
-                  className="w-3 opacity-70"
+                  className={`w-3 transition-transform duration-200 ${
+                    showDropdown ? "rotate-180" : ""
+                  }`}
                   src={assets.dropdown_icon}
                   alt=""
                 />
               </div>
 
               {/* Dropdown */}
-              <div className="absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-200">
+              <div
+                className={`absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg border transition-all duration-200 ${
+                  showDropdown
+                    ? "opacity-100 visible translate-y-0"
+                    : "opacity-0 invisible -translate-y-2"
+                }`}
+              >
                 <div className="py-2 text-sm text-gray-700">
                   <p
-                    onClick={() => navigate("/my-profile")}
+                    onClick={() => {
+                      navigate("/my-profile");
+                      setShowDropdown(false);
+                    }}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                   >
                     My Profile
                   </p>
+
                   <p
-                    onClick={() => navigate("/my-appointments")}
+                    onClick={() => {
+                      navigate("/my-appointments");
+                      setShowDropdown(false);
+                    }}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                   >
                     My Appointments
                   </p>
+
                   <p
-                    onClick={() => setToken(false)}
+                    onClick={() => {
+                      setToken(false);
+                      setShowDropdown(false);
+                    }}
                     className="px-4 py-2 hover:bg-red-50 text-red-500 cursor-pointer"
                   >
                     Logout
@@ -103,14 +134,15 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Sidebar */}
+      {/* Mobile Overlay */}
       <div
-        className={`fixed inset-0 z-50 bg-black bg-opacity-40 transition-opacity ${
+        className={`fixed inset-0 z-40 bg-black bg-opacity-40 transition-opacity ${
           showMenu ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
         onClick={() => setShowMenu(false)}
       />
 
+      {/* Mobile Sidebar */}
       <div
         className={`fixed top-0 right-0 h-full w-72 bg-white z-50 shadow-lg transform transition-transform duration-300 ${
           showMenu ? "translate-x-0" : "translate-x-full"
@@ -127,32 +159,16 @@ const Navbar = () => {
         </div>
 
         <div className="flex flex-col gap-2 p-6 text-gray-700 font-medium">
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            to="/"
-            className="py-2 px-3 rounded-lg hover:bg-gray-100"
-          >
+          <NavLink onClick={() => setShowMenu(false)} to="/" className="py-2 px-3 rounded-lg hover:bg-gray-100">
             Home
           </NavLink>
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            to="/doctors"
-            className="py-2 px-3 rounded-lg hover:bg-gray-100"
-          >
+          <NavLink onClick={() => setShowMenu(false)} to="/doctors" className="py-2 px-3 rounded-lg hover:bg-gray-100">
             All Doctors
           </NavLink>
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            to="/about"
-            className="py-2 px-3 rounded-lg hover:bg-gray-100"
-          >
+          <NavLink onClick={() => setShowMenu(false)} to="/about" className="py-2 px-3 rounded-lg hover:bg-gray-100">
             About
           </NavLink>
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            to="/contact"
-            className="py-2 px-3 rounded-lg hover:bg-gray-100"
-          >
+          <NavLink onClick={() => setShowMenu(false)} to="/contact" className="py-2 px-3 rounded-lg hover:bg-gray-100">
             Contact
           </NavLink>
 
