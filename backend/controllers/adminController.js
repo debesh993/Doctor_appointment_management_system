@@ -8,25 +8,32 @@ const addDoctor = async (req, res) => {
     try {
 
         const { name, email, password, speciality, degree, experience, about, fees, address } = req.body
+
         if (!name || !email || !password || !speciality || !degree || !experience || !about || !fees || !address) {
-            return res.json({ success: false, message: "Missing Details" })
+            return res.status(400).json({ success: false, message: "Missing Details" })
         }
+
         if (!validator.isEmail(email)) {
-            return res.json({ success: false, message: "Please enter a valid email" })
+            return res.status(400).json({ success: false, message: "Please enter a valid email" })
         }
 
         // validating strong password
         if (password.length < 8) {
-            return res.json({ success: false, message: "Please enter a strong password" })
+            return res.status(400).json({ success: false, message: "Please enter a strong password" })
         }
 
         // hashing doctor password
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
+
         // upload image to cloudinary
         const imageFile = req.file;
-        // console.log(imageFile.path);
-        const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" });
+
+        const imageUpload = await cloudinary.uploader.upload(
+            imageFile.path,
+            { resource_type: "image" }
+        );
+
         const imageUrl = imageUpload.secure_url
 
         const doctorData = {
@@ -42,16 +49,22 @@ const addDoctor = async (req, res) => {
             address: JSON.parse(address),
             date: Date.now()
         }
-       // console.log(doctorData)
 
         const newDoctor = new doctorModel(doctorData)
         await newDoctor.save();
-        return res.json({ success: true, message: "Doctor Added" })
+
+        return res.status(201).json({
+            success: true,
+            message: "Doctor Added"
+        })
+
     } catch (error) {
         console.log(error);
-        return res.json({ success: false, message: error.message })
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
     }
-
 }
 
 //API for admin login
@@ -66,12 +79,31 @@ const loginAdmin = async (req,res) => {
           return res.json({success:true,token}); 
 
         } else {
-            res.json({success:false,message:"Invalid credentials"})
+           return res.status(401).json({success:false,message:"Invalid credentials"})
         }
 
     } catch (error) {
-        console.log(error)
-        res.json({success:false,message:error.message})
+        // console.log(error)
+        return res.json({success:false,message:error.message})
     }
 }
-export { addDoctor,loginAdmin }
+//api to get all doctors list from admn panel
+const allDoctors = async (req, res) => {
+  try {
+    const doctors = await doctorModel.find({}).select('-password');
+
+    return res.status(200).json({
+      success: true,
+      doctors
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+export { addDoctor,loginAdmin,allDoctors }

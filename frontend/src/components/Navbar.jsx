@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { assets } from "../assets/assets";
 import { NavLink, useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [token, setToken] = useState(true);
+  // const [token, setToken] = useState(true);
+  const{token,setToken}=useContext(AppContext)
 
   const dropdownRef = useRef(null);
 
@@ -31,6 +33,11 @@ const Navbar = () => {
         : "text-gray-600 hover:text-indigo-600"
     }`;
 
+  const logout=()=>{
+    setToken(false)
+    localStorage.removeItem('token')
+    setShowDropdown(false);
+  }
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
@@ -104,10 +111,7 @@ const Navbar = () => {
                   </p>
 
                   <p
-                    onClick={() => {
-                      setToken(false);
-                      setShowDropdown(false);
-                    }}
+                    onClick={logout}
                     className="px-4 py-2 hover:bg-red-50 text-red-500 cursor-pointer"
                   >
                     Logout
