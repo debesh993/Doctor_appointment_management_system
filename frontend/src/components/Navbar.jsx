@@ -8,7 +8,7 @@ const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   // const [token, setToken] = useState(true);
-  const{token,setToken}=useContext(AppContext)
+  const{token,setToken,userData}=useContext(AppContext)
 
   const dropdownRef = useRef(null);
 
@@ -61,7 +61,7 @@ const Navbar = () => {
         {/* Right Section */}
         <div className="flex items-center gap-4">
 
-          {token ? (
+          {token && userData ? (
             <div className="relative" ref={dropdownRef}>
               <div
                 onClick={() => setShowDropdown((prev) => !prev)}
@@ -69,7 +69,7 @@ const Navbar = () => {
               >
                 <img
                   className="w-9 h-9 rounded-full object-cover border"
-                  src={assets.profile_pic}
+                  src={userData.image}
                   alt=""
                 />
                 <img
