@@ -9,7 +9,7 @@ const AppContextProvider = (props) => {
     const [userData,setUserData]=useState(false)
     const [token,setToken]=useState(localStorage.getItem('token')?localStorage.getItem('token'):false)
     const currrencySymbol="$"
-    const backendUrl=import.meta.env.VITE_BACKEND_URL
+    const backendUrl="https://doctor-appointment-management-system-xzjv.onrender.com/"
    
     const getAlldoctors = async () => {
         try {
